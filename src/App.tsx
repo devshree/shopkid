@@ -4,6 +4,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Footer from "./components/Footer.tsx";
 import Navbar from "./components/Navbar.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
+import ClothingPage from "./pages/ClothingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
 
 // Create a warm, child-friendly theme
@@ -65,6 +66,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/clothing" element={<ClothingPage />} />
             </Routes>
           </main>
           <Footer />
