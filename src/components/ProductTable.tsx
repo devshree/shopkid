@@ -53,15 +53,7 @@ export function ProductTable({
                   <Button
                     variant="outlined"
                     color="primary"
-                    onClick={async () => {
-                      if (product.id) {
-                        try {
-                          await onEdit(product);
-                        } catch (error) {
-                          console.error("Error deleting product:", error);
-                        }
-                      }
-                    }}
+                    onClick={() => onEdit(product)}
                   >
                     Edit
                   </Button>

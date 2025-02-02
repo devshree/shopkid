@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Product, ProductInput } from "../api/client";
 import { productsApi } from "../api/client.ts";
+import { EditProductPage } from "../components/EditProductPage";
 import { ProductTable } from "../components/ProductTable.tsx";
 
 function AdminPage() {
@@ -27,6 +28,7 @@ function AdminPage() {
     description: "",
     age_range: "",
   });
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     loadProducts();
@@ -101,10 +103,11 @@ function AdminPage() {
     }
   };
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = async (product: Product) => {
     try {
       await productsApi.update(product.id, product);
       loadProducts();
+      setEditingProduct(null);
     } catch (error) {
       console.error("Error updating product:", error);
     }
@@ -213,8 +216,17 @@ function AdminPage() {
       <ProductTable
         products={products}
         onDelete={handleDeleteProduct}
-        onEdit={handleEdit}
+        onEdit={(product) => setEditingProduct(product)}
       />
+
+      {editingProduct && (
+        <EditProductPage
+          open={!!editingProduct}
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onSave={handleEdit}
+        />
+      )}
     </Container>
   );
 }
