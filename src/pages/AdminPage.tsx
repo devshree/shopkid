@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Product, ProductInput } from "../api/client";
 import { productsApi } from "../api/client.ts";
-import { EditProductPage } from "../components/EditProductPage";
+import { EditProductPage } from "../components/EditProductPage.tsx";
 import { ProductTable } from "../components/ProductTable.tsx";
 
 function AdminPage() {

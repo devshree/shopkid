@@ -61,7 +61,12 @@ export function ProductTable({
                     variant="outlined"
                     color="error"
                     onClick={async () => {
-                      if (product.id) {
+                      if (
+                        product.id &&
+                        window.confirm(
+                          "Are you sure you want to delete this product?"
+                        )
+                      ) {
                         try {
                           await onDelete(product.id);
                         } catch (error) {
