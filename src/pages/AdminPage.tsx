@@ -23,18 +23,18 @@ import { productsApi, type Product as ApiProduct } from '../api/client.ts';
 interface Product {
   id?: number;
   name: string;
-  price: string;
+  price: number;
   image: string;
-  category: 'clothes' | 'toys' | string;
+  category: "clothes" | "toys" | string;
 }
 
 function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState<Product>({
-    name: '',
-    price: '',
-    image: '',
-    category: '',
+    name: "",
+    price: 0,
+    image: "",
+    category: "",
   });
 
   useEffect(() => {
@@ -44,12 +44,12 @@ function AdminPage() {
   const loadProducts = async () => {
     try {
       const response = await productsApi.getAll();
-      const formattedProducts = response.map(p => ({
+      const formattedProducts = response.map((p) => ({
         id: p.id,
         name: p.name,
-        price: p.price.toString(),
-        image: p.image || '',
-        category: p.category
+        price: p.price,
+        image: p.image || "",
+        category: p.category,
       }));
       setProducts(formattedProducts);
     } catch (error) {
@@ -72,19 +72,19 @@ function AdminPage() {
     try {
       const productInput = {
         name: newProduct.name,
-        price: parseFloat(newProduct.price),
-        category: newProduct.category as 'clothes' | 'toys',
-        age_range: '0-12',
+        price: parseFloat(newProduct.price.toString()),
+        category: newProduct.category as "clothes" | "toys",
+        age_range: "0-12",
         stock: 100,
         image: newProduct.image,
       };
       
       await productsApi.create(productInput);
       setNewProduct({
-        name: '',
-        price: '',
-        image: '',
-        category: '',
+        name: "",
+        price: 0,
+        image: "",
+        category: "",
       });
       loadProducts();
     } catch (error) {
