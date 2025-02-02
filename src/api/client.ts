@@ -33,8 +33,8 @@ export interface CartItemInput {
   price: number;
 }
 
-// API client configuration
-const API_BASE_URL = 'http://localhost:8080';
+//  client configuration
+const API_BASE_URL = "http://localhost:8080/api";
 
 export const client = axios.create({
   baseURL: API_BASE_URL,
@@ -79,17 +79,17 @@ client.interceptors.response.use(
 // Products API
 export const productsApi = {
   getAll: async (): Promise<Product[]> => {
-    const response = await client.get('/api/products');
+    const response = await client.get('/products');
     return response.data;
   },
 
   getById: async (id: number): Promise<Product> => {
-    const response = await client.get(`/api/products/${id}`);
+    const response = await client.get(`/products/${id}`);
     return response.data;
   },
 
   create: async (product: ProductInput): Promise<Product> => {
-    const response = await client.post('/api/products', product);
+    const response = await client.post('/products', product);
     return response.data;
   },
 };
@@ -97,17 +97,17 @@ export const productsApi = {
 // Cart API
 export const cartApi = {
   getContents: async (): Promise<CartItem[]> => {
-    const response = await client.get('/api/cart');
+    const response = await client.get('/cart');
     return response.data;
   },
 
   addItem: async (item: CartItemInput): Promise<CartItem> => {
-    const response = await client.post('/api/cart/add', item);
+    const response = await client.post('/cart/add', item);
     return response.data;
   },
 
   removeItem: async (id: number): Promise<void> => {
-    await client.delete(`/api/cart/remove/${id}`);
+    await client.delete(`/cart/remove/${id}`);
   },
 };
 
