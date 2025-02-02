@@ -36,9 +36,15 @@ export function EditProductPage({
       | SelectChangeEvent<string>
   ) => {
     const { name, value } = e.target;
+    // Convert to integer for numeric fields
+    const parsedValue =
+      name === "stock" || name === "price"
+        ? parseFloat(value) || 0 // Use parseFloat for price, converts to 0 if invalid
+        : value;
+
     setEditedProduct({
       ...editedProduct,
-      [name]: value,
+      [name]: parsedValue,
     });
   };
 
