@@ -98,6 +98,11 @@ export const productsApi = {
   delete: async (id: number): Promise<void> => {
     await client.delete(`/products/${id}`);
   },
+
+  update: async (id: number, product: ProductInput): Promise<Product> => {
+    const response = await client.put(`/products/${id}`, product);
+    return response.data;
+  },
 };
 
 // Cart API

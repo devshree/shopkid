@@ -1,6 +1,7 @@
 import {
   Button,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -8,14 +9,20 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import React from "react";
 import { Product } from "../api/client";
 
 interface ProductTableProps {
   products: Product[];
   onDelete: (id: number) => Promise<void>;
+  onEdit: (product: Product) => void;
 }
 
-export function ProductTable({ products, onDelete }: ProductTableProps) {
+export function ProductTable({
+  products,
+  onDelete,
+  onEdit,
+}: ProductTableProps) {
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -24,6 +31,10 @@ export function ProductTable({ products, onDelete }: ProductTableProps) {
             <TableCell>Name</TableCell>
             <TableCell>Category</TableCell>
             <TableCell>Price</TableCell>
+            <TableCell>Age Range</TableCell>
+            <TableCell>Stock</TableCell>
+            <TableCell>Image URL</TableCell>
+            <TableCell>Description</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -32,23 +43,44 @@ export function ProductTable({ products, onDelete }: ProductTableProps) {
             <TableRow key={product.id}>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.category}</TableCell>
-              <TableCell>{product.price}</TableCell>
+              <TableCell>${product.price}</TableCell>
+              <TableCell>{product.age_range}</TableCell>
+              <TableCell>{product.stock}</TableCell>
+              <TableCell>{product.image}</TableCell>
+              <TableCell>{product.description}</TableCell>
               <TableCell>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={async () => {
-                    if (product.id) {
-                      try {
-                        await onDelete(product.id);
-                      } catch (error) {
-                        console.error("Error deleting product:", error);
+                <Stack direction="row" spacing={1}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={async () => {
+                      if (product.id) {
+                        try {
+                          await onEdit(product);
+                        } catch (error) {
+                          console.error("Error deleting product:", error);
+                        }
                       }
-                    }
-                  }}
-                >
-                  Delete
-                </Button>
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={async () => {
+                      if (product.id) {
+                        try {
+                          await onDelete(product.id);
+                        } catch (error) {
+                          console.error("Error deleting product:", error);
+                        }
+                      }
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}

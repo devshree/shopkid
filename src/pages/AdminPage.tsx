@@ -101,6 +101,15 @@ function AdminPage() {
     }
   };
 
+  const handleEdit = (product: Product) => {
+    try {
+      await productsApi.update(product.id, product);
+      loadProducts();
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" gutterBottom>
@@ -201,7 +210,11 @@ function AdminPage() {
         </form>
       </Paper>
 
-      <ProductTable products={products} onDelete={handleDeleteProduct} />
+      <ProductTable
+        products={products}
+        onDelete={handleDeleteProduct}
+        onEdit={handleEdit}
+      />
     </Container>
   );
 }
