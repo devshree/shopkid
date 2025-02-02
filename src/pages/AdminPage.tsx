@@ -13,6 +13,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { client } from '../api/client.ts';
 
@@ -21,7 +25,7 @@ interface Product {
   name: string;
   price: string;
   image: string;
-  category: string;
+  category: 'clothes' | 'toys' | string;
 }
 
 function AdminPage() {
@@ -46,10 +50,13 @@ function AdminPage() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+  ) => {
+    const { name, value } = e.target;
     setNewProduct({
       ...newProduct,
-      [e.target.name]: e.target.value,
+      [name as string]: value,
     });
   };
 
@@ -102,14 +109,19 @@ function AdminPage() {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                name="category"
-                label="Category"
-                value={newProduct.category}
-                onChange={handleInputChange}
-              />
+              <FormControl fullWidth required>
+                <InputLabel id="category-label">Category</InputLabel>
+                <Select
+                  labelId="category-label"
+                  name="category"
+                  value={newProduct.category}
+                  label="Category"
+                  onChange={handleInputChange}
+                >
+                  <MenuItem value="clothes">Clothes</MenuItem>
+                  <MenuItem value="toys">Toys</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
