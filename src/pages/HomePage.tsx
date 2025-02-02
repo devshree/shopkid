@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Grid, 
@@ -11,6 +11,7 @@ import {
   Paper
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { client } from '../api/client.ts';
 
 const HeroSection = styled(Paper)(({ theme }) => ({
   background: `linear-gradient(45deg, ${theme.palette.primary.light} 30%, ${theme.palette.secondary.light} 90%)`,
@@ -30,25 +31,29 @@ const ProductCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const products = [
-  {
-    id: 1,
-    name: 'Rainbow T-Shirt',
-    price: '$19.99',
-    image: 'https://via.placeholder.com/200x200?text=Kids+Tshirt',
-    category: 'Clothing'
-  },
-  {
-    id: 2,
-    name: 'Wooden Building Blocks',
-    price: '$29.99',
-    image: 'https://via.placeholder.com/200x200?text=Toy+Blocks',
-    category: 'Toys'
-  },
-  // Add more products as needed
-];
+interface Product {
+  id: number;
+  name: string;
+  price: string;
+  image: string;
+  category: string;
+}
 
 function HomePage() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const response = await client.get('/products');
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    };
+    loadProducts();
+  }, []);
+
   return (
     <Box component="main" sx={{ flexGrow: 1 }}>
       <HeroSection>
