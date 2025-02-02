@@ -7,17 +7,12 @@ import {
   MenuItem,
   Paper,
   Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { productsApi } from "../api/client.ts";
+import { ProductTable } from "../components/ProductTable.tsx";
 
 interface Product {
   id?: number;
@@ -91,6 +86,15 @@ function AdminPage() {
     }
   };
 
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      await productsApi.delete(id);
+      loadProducts();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" gutterBottom>
@@ -157,45 +161,7 @@ function AdminPage() {
         </form>
       </Paper>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={async () => {
-                      if (product.id) {
-                        try {
-                          await productsApi.delete(product.id);
-                          loadProducts();
-                        } catch (error) {
-                          console.error("Error deleting product:", error);
-                        }
-                      }
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <ProductTable products={products} onDelete={handleDeleteProduct} />
     </Container>
   );
 }

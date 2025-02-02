@@ -79,7 +79,7 @@ client.interceptors.response.use(
 // Products API
 export const productsApi = {
   getAll: async (): Promise<Product[]> => {
-    const response = await client.get('/products');
+    const response = await client.get("/products");
     return response.data;
   },
 
@@ -89,8 +89,12 @@ export const productsApi = {
   },
 
   create: async (product: ProductInput): Promise<Product> => {
-    const response = await client.post('/products', product);
+    const response = await client.post("/products", product);
     return response.data;
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await client.delete(`/products/${id}`);
   },
 };
 
