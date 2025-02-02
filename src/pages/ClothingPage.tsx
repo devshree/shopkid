@@ -1,7 +1,7 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Product, productsApi } from "../api/client";
-import { ProductCard } from "../components/ProductCard";
+import { Product, productsApi } from "../api/client.ts";
+import { ProductCard } from "../components/ProductCard.tsx";
 
 function ClothingPage() {
   const [products, setProducts] = useState<Product[]>([]);

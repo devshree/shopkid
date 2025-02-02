@@ -19,7 +19,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
 }));
 
-const NavButton = styled(Button)(({ theme }) => ({
+const NavButton = styled(Button)<{
+  component?: React.ElementType;
+  to?: string;
+}>(({ theme }) => ({
   color: theme.palette.text.primary,
   margin: "0 8px",
   "&:hover": {
