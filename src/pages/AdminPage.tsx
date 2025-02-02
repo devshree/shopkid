@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from 'react';
 import {
-  Container,
-  Typography,
-  Paper,
-  TextField,
   Button,
+  Container,
+  FormControl,
   Grid,
-  Box,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
-import { productsApi, type Product as ApiProduct } from '../api/client.ts';
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { productsApi } from "../api/client.ts";
 
 interface Product {
   id?: number;
@@ -53,7 +52,7 @@ function AdminPage() {
       }));
       setProducts(formattedProducts);
     } catch (error) {
-      console.error('Error loading products:', error);
+      console.error("Error loading products:", error);
     }
   };
 
@@ -78,7 +77,7 @@ function AdminPage() {
         stock: 100,
         image: newProduct.image,
       };
-      
+
       await productsApi.create(productInput);
       setNewProduct({
         name: "",
@@ -88,7 +87,7 @@ function AdminPage() {
       });
       loadProducts();
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error("Error creating product:", error);
     }
   };
 
@@ -184,7 +183,7 @@ function AdminPage() {
                           await productsApi.delete(product.id);
                           loadProducts();
                         } catch (error) {
-                          console.error('Error deleting product:', error);
+                          console.error("Error deleting product:", error);
                         }
                       }
                     }}
@@ -201,4 +200,4 @@ function AdminPage() {
   );
 }
 
-export default AdminPage; 
+export default AdminPage;
