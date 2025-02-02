@@ -43,6 +43,39 @@ export const client = axios.create({
   },
 });
 
+// Add request interceptor for debugging
+client.interceptors.request.use(
+  (config) => {
+    console.log('Making request to:', config.url, config.method);
+    return config;
+  },
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Update response interceptor with better error handling
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error('Response error data:', error.response.data);
+      console.error('Response error status:', error.response.status);
+      console.error('Response error headers:', error.response.headers);
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('No response received:', error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error('Error setting up request:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Products API
 export const productsApi = {
   getAll: async (): Promise<Product[]> => {

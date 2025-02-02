@@ -18,7 +18,7 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-import { client } from '../api/client.ts';
+import { productsApi, type Product as ApiProduct } from '../api/client.ts';
 
 interface Product {
   id?: number;
@@ -43,8 +43,15 @@ function AdminPage() {
 
   const loadProducts = async () => {
     try {
-      const response = await client.get('/products');
-      setProducts(response.data);
+      const response = await productsApi.getAll();
+      const formattedProducts = response.map(p => ({
+        id: p.id,
+        name: p.name,
+        price: p.price.toString(),
+        image: p.image || '',
+        category: p.category
+      }));
+      setProducts(formattedProducts);
     } catch (error) {
       console.error('Error loading products:', error);
     }
@@ -63,7 +70,16 @@ function AdminPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await client.post('/products', newProduct);
+      const productInput = {
+        name: newProduct.name,
+        price: parseFloat(newProduct.price),
+        category: newProduct.category as 'clothes' | 'toys',
+        age_range: '0-12',
+        stock: 100,
+        image: newProduct.image,
+      };
+      
+      await productsApi.create(productInput);
       setNewProduct({
         name: '',
         price: '',
@@ -163,8 +179,14 @@ function AdminPage() {
                     variant="outlined"
                     color="error"
                     onClick={async () => {
-                      await client.delete(`/products/${product.id}`);
-                      loadProducts();
+                      if (product.id) {
+                        try {
+                          await productsApi.delete(product.id);
+                          loadProducts();
+                        } catch (error) {
+                          console.error('Error deleting product:', error);
+                        }
+                      }
                     }}
                   >
                     Delete
