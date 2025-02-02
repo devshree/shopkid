@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Paper,
   Stack,
@@ -46,7 +47,22 @@ export function ProductTable({
               <TableCell>${product.price}</TableCell>
               <TableCell>{product.age_range}</TableCell>
               <TableCell>{product.stock}</TableCell>
-              <TableCell>{product.image}</TableCell>
+              <TableCell>
+                <Box
+                  component="img"
+                  sx={{
+                    width: 50,
+                    height: 50,
+                    objectFit: "cover",
+                    borderRadius: 1,
+                  }}
+                  src={product.image}
+                  alt={product.name}
+                  onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                    e.currentTarget.src = "https://via.placeholder.com/50";
+                  }}
+                />
+              </TableCell>
               <TableCell>{product.description}</TableCell>
               <TableCell>
                 <Stack direction="row" spacing={1}>
