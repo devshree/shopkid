@@ -6,18 +6,20 @@ export interface Product {
   name: string;
   description?: string;
   price: number;
-  category: 'clothes' | 'toys';
+  category: "clothes" | "toys";
   age_range: string;
   stock: number;
+  image: string;
 }
 
 export interface ProductInput {
   name: string;
   description?: string;
   price: number;
-  category: 'clothes' | 'toys';
+  category: "clothes" | "toys";
   age_range: string;
   stock: number;
+  image: string;
 }
 
 export interface CartItem {

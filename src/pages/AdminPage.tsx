@@ -7,28 +7,25 @@ import {
   MenuItem,
   Paper,
   Select,
+  SelectChangeEvent,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { Product, ProductInput } from "../api/client";
 import { productsApi } from "../api/client.ts";
 import { ProductTable } from "../components/ProductTable.tsx";
 
-interface Product {
-  id?: number;
-  name: string;
-  price: number;
-  image: string;
-  category: "clothes" | "toys" | string;
-}
-
 function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState<Product>({
+  const [newProduct, setNewProduct] = useState<ProductInput>({
     name: "",
     price: 0,
     image: "",
-    category: "",
+    category: "clothes",
+    stock: 0,
+    description: "",
+    age_range: "",
   });
 
   useEffect(() => {
@@ -44,6 +41,9 @@ function AdminPage() {
         price: p.price,
         image: p.image || "",
         category: p.category,
+        stock: p.stock,
+        description: p.description,
+        age_range: p.age_range,
       }));
       setProducts(formattedProducts);
     } catch (error) {
@@ -52,7 +52,9 @@ function AdminPage() {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<string>
   ) => {
     const { name, value } = e.target;
     setNewProduct({
@@ -68,9 +70,10 @@ function AdminPage() {
         name: newProduct.name,
         price: parseFloat(newProduct.price.toString()),
         category: newProduct.category as "clothes" | "toys",
-        age_range: "0-12",
-        stock: 100,
+        age_range: newProduct.age_range,
+        stock: parseInt(newProduct.stock.toString()),
         image: newProduct.image,
+        description: newProduct.description,
       };
 
       await productsApi.create(productInput);
@@ -78,7 +81,10 @@ function AdminPage() {
         name: "",
         price: 0,
         image: "",
-        category: "",
+        category: "clothes",
+        age_range: "",
+        stock: 0,
+        description: "",
       });
       loadProducts();
     } catch (error) {
@@ -123,6 +129,7 @@ function AdminPage() {
                 fullWidth
                 name="price"
                 label="Price"
+                type="number"
                 value={newProduct.price}
                 onChange={handleInputChange}
               />
@@ -146,9 +153,42 @@ function AdminPage() {
               <TextField
                 required
                 fullWidth
+                name="stock"
+                label="Stock"
+                type="number"
+                value={newProduct.stock}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
                 name="image"
                 label="Image URL"
                 value={newProduct.image}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                name="age_range"
+                label="Age Range"
+                value={newProduct.age_range}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="description"
+                label="Description"
+                multiline
+                rows={4}
+                value={newProduct.description}
                 onChange={handleInputChange}
               />
             </Grid>
