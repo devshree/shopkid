@@ -3,6 +3,7 @@ import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Footer from "./components/Footer.tsx";
 import Navbar from "./components/Navbar.tsx";
+import UserProfilePage from "./components/UserProfilePage.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import ClothingPage from "./pages/ClothingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
@@ -71,6 +72,7 @@ function App() {
               <Route path="/clothing" element={<ClothingPage />} />
               <Route path="/toys" element={<ToysPage />} />
               <Route path="/sale" element={<SalePage />} />
+              <Route path="/profile" element={<UserProfilePage />} />
             </Routes>
           </main>
           <Footer />
