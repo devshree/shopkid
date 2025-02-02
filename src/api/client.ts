@@ -35,6 +35,26 @@ export interface CartItemInput {
   price: number;
 }
 
+// User related interfaces
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  // password is not included in response
+}
+
+export interface UserInput {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface UserUpdateInput {
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
 //  client configuration
 const API_BASE_URL = "http://localhost:8080/api";
 
@@ -119,6 +139,36 @@ export const cartApi = {
 
   removeItem: async (id: number): Promise<void> => {
     await client.delete(`/cart/remove/${id}`);
+  },
+};
+
+// User API
+export const userApi = {
+  getCurrentUser: async (): Promise<User> => {
+    const response = await client.get("/user/me");
+    return response.data;
+  },
+
+  updateProfile: async (updates: UserUpdateInput): Promise<User> => {
+    const response = await client.put("/user/profile", updates);
+    return response.data;
+  },
+
+  changePassword: async (oldPassword: string, newPassword: string): Promise<void> => {
+    await client.post("/user/change-password", {
+      oldPassword,
+      newPassword,
+    });
+  },
+
+  register: async (userData: UserInput): Promise<User> => {
+    const response = await client.post("/user/register", userData);
+    return response.data;
+  },
+
+  login: async (email: string, password: string): Promise<{ token: string; user: User }> => {
+    const response = await client.post("/user/login", { email, password });
+    return response.data;
   },
 };
 
