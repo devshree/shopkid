@@ -59,11 +59,7 @@ function Navbar() {
             <NavButton component={RouterLink} to="/sale">
               Sale
             </NavButton>
-            <NavButton component={RouterLink} to="/profile">
-              Profile
-            </NavButton>
-
-            <IconButton color="primary">
+            <IconButton color="primary" component={RouterLink} to="/profile">
               <PersonIcon />
             </IconButton>
 
