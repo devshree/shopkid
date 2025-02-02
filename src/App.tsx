@@ -3,6 +3,10 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import Navbar from './components/Navbar.tsx';
 import HomePage from './pages/HomePage.tsx';
 import Footer from './components/Footer.tsx';
+import AdminPage from './pages/AdminPage.tsx';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { AppBar, Toolbar, Button } from '@mui/material';
 
 // Create a warm, child-friendly theme
 const theme = createTheme({
@@ -50,13 +54,18 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Navbar />
-        <main>
-          <HomePage />
-        </main>
-        <Footer />
-      </div>
+      <Router>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <Navbar />
+          <main>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/admin" element={<AdminPage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
     </ThemeProvider>
   );
 }
