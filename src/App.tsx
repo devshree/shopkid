@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import ClothingPage from "./pages/ClothingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
+import ToysPage from "./pages/ToysPage.tsx";
 
 // Create a warm, child-friendly theme
 const theme = createTheme({
@@ -67,6 +68,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/clothing" element={<ClothingPage />} />
+              <Route path="/toys" element={<ToysPage />} />
             </Routes>
           </main>
           <Footer />
