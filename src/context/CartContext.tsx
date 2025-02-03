@@ -1,15 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "./AuthContext";
-
-interface CartItem {
-  id: number;
-  quantity: number;
-}
+import { cartApi } from "../api/client.ts";
+import { CartItem } from "../types/types.ts";
+import { useAuth } from "./AuthContext.tsx";
 
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (productId: number) => void;
   removeFromCart: (productId: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
   cartCount: number;
 }
 
@@ -31,13 +29,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const fetchCartItems = async () => {
     try {
-      const response = await fetch("/api/cart", {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCartItems(data.items || []);
-      }
+      const data = await cartApi.getCart();
+      setCartItems(data.items || []);
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -45,17 +38,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = async (productId: number) => {
     try {
-      const response = await fetch("/api/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ productId }),
-      });
-      if (response.ok) {
-        await fetchCartItems();
-      }
+      await cartApi.addToCart(productId);
+      await fetchCartItems();
     } catch (error) {
       console.error("Error adding item to cart:", error);
     }
@@ -63,19 +47,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const removeFromCart = async (productId: number) => {
     try {
-      const response = await fetch("/api/cart/remove", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ productId }),
-      });
-      if (response.ok) {
-        await fetchCartItems();
-      }
+      await cartApi.removeFromCart(productId);
+      await fetchCartItems();
     } catch (error) {
       console.error("Error removing item from cart:", error);
+    }
+  };
+
+  const updateQuantity = async (productId: number, quantity: number) => {
+    try {
+      if (quantity <= 0) {
+        await cartApi.removeFromCart(productId);
+      } else {
+        await cartApi.addToCart(productId);
+      }
+      await fetchCartItems();
+    } catch (error) {
+      console.error("Error updating quantity:", error);
     }
   };
 
@@ -83,7 +71,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, cartCount }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        cartCount,
+      }}
     >
       {children}
     </CartContext.Provider>

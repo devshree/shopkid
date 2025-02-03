@@ -1,100 +1,17 @@
 import axios from 'axios';
-
-// Types based on swagger schemas
-export interface Product {
-  id: number;
-  name: string;
-  description?: string;
-  price: number;
-  category: "clothes" | "toys";
-  age_range: string;
-  stock: number;
-  image?: string;
-}
-
-export interface ProductInput {
-  name: string;
-  description?: string;
-  price: number;
-  category: "clothes" | "toys";
-  age_range: string;
-  stock: number;
-  image?: string;
-}
-
-export interface CartItem {
-  id: number;
-  product_id: number;
-  quantity: number;
-  price: number;
-}
-
-export interface CartItemInput {
-  product_id: number;
-  quantity: number;
-  price: number;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  token: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  name: string;
-  role: "admin" | "buyer" | "other";
-}
-
-export interface UserProfile {
-  id: number;
-  email: string;
-  name: string;
-  role: "admin" | "buyer" | "other";
-}
-
-export interface Order {
-  id: number;
-  user_id: number;
-  total_amount: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  items: OrderItem[];
-}
-
-export interface OrderItem {
-  id: number;
-  order_id: number;
-  product_id: number;
-  quantity: number;
-  price: number;
-}
-
-// User related interfaces
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  // password is not included in response
-}
-
-export interface UserInput {
-  username: string;
-  email: string;
-  password: string;
-}
-
-export interface UserUpdateInput {
-  username?: string;
-  email?: string;
-  password?: string;
-}
+import {
+  CartItem,
+  LoginRequest,
+  LoginResponse,
+  Order,
+  Product,
+  ProductInput,
+  RegisterRequest,
+  User,
+  UserInput,
+  UserProfile,
+  UserUpdateInput,
+} from "../types/types.ts";
 
 // API client configuration
 const API_BASE_URL = "http://localhost:8080/api";
@@ -176,18 +93,42 @@ export const productsApi = {
 
 // Cart API
 export const cartApi = {
-  getContents: async (): Promise<CartItem[]> => {
-    const response = await client.get("/cart");
-    return response.data;
+  getCart: async (): Promise<{ items: CartItem[] }> => {
+    const response = await fetch("/api/cart", {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch cart");
+    }
+    return response.json();
   },
 
-  addItem: async (item: CartItemInput): Promise<CartItem> => {
-    const response = await client.post("/cart/add", item);
-    return response.data;
+  addToCart: async (productId: number): Promise<void> => {
+    const response = await fetch("/api/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ productId }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to add item to cart");
+    }
   },
 
-  removeItem: async (id: number): Promise<void> => {
-    await client.delete(`/cart/remove/${id}`);
+  removeFromCart: async (productId: number): Promise<void> => {
+    const response = await fetch("/api/cart/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ productId }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to remove item from cart");
+    }
   },
 };
 

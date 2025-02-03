@@ -11,7 +11,7 @@ import Footer from "./components/Footer.tsx";
 import Navbar from "./components/Navbar.tsx";
 import UserProfilePage from "./components/UserProfilePage.tsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.tsx";
-import { CartProvider } from "./context/CartContext";
+import { CartProvider } from "./context/CartContext.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import ClothingPage from "./pages/ClothingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";

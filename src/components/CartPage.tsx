@@ -20,7 +20,7 @@ import { useCart } from "../context/CartContext.tsx";
 import { formatPrice } from "../utils/format.ts";
 
 export function CartPage() {
-  const { cart, updateQuantity, removeFromCart } = useCart();
+  const { cartItems: cart, updateQuantity, removeFromCart } = useCart();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -56,8 +56,8 @@ export function CartPage() {
                 <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.product.image}
+                      alt={item.product.name}
                       style={{
                         width: 50,
                         height: 50,
@@ -65,7 +65,7 @@ export function CartPage() {
                         marginRight: 16,
                       }}
                     />
-                    {item.name}
+                    {item.product.name}
                   </Box>
                 </TableCell>
                 <TableCell align="right">{formatPrice(item.price)}</TableCell>

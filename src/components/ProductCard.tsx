@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React from "react";
-import { Product } from "../api/client";
+import { Product } from "../types/types.ts";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
