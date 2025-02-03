@@ -7,9 +7,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/client";
+import { authApi } from "../api/client.ts";
 
 export function LoginPage() {
   const navigate = useNavigate();
