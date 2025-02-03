@@ -1,12 +1,20 @@
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import React from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
 import Footer from "./components/Footer.tsx";
 import Navbar from "./components/Navbar.tsx";
 import UserProfilePage from "./components/UserProfilePage.tsx";
+import { AuthProvider, useAuth } from "./context/AuthContext.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import ClothingPage from "./pages/ClothingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
+import RegisterPage from "./pages/RegisterPage.tsx";
 import SalePage from "./pages/SalePage.tsx";
 import ToysPage from "./pages/ToysPage.tsx";
 
@@ -52,33 +60,93 @@ const theme = createTheme({
   },
 });
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
+}
+
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            minHeight: "100vh",
-          }}
-        >
-          <Navbar />
-          <main>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/clothing" element={<ClothingPage />} />
-              <Route path="/toys" element={<ToysPage />} />
-              <Route path="/sale" element={<SalePage />} />
-              <Route path="/profile/:id" element={<UserProfilePage />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              minHeight: "100vh",
+            }}
+          >
+            <Navbar />
+            <main>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <HomePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <AdminPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/clothing"
+                  element={
+                    <ProtectedRoute>
+                      <ClothingPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/toys"
+                  element={
+                    <ProtectedRoute>
+                      <ToysPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/sale"
+                  element={
+                    <ProtectedRoute>
+                      <SalePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile/:id"
+                  element={
+                    <ProtectedRoute>
+                      <UserProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 
