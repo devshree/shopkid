@@ -9,7 +9,6 @@ export interface Product {
   category: "clothes" | "toys";
   age_range: string;
   stock: number;
-  image: string;
 }
 
 export interface ProductInput {
@@ -19,7 +18,7 @@ export interface ProductInput {
   category: "clothes" | "toys";
   age_range: string;
   stock: number;
-  image: string;
+  image?: string;
 }
 
 export interface CartItem {
@@ -30,6 +29,47 @@ export interface CartItem {
 }
 
 export interface CartItemInput {
+  product_id: number;
+  quantity: number;
+  price: number;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+  role: "admin" | "buyer" | "other";
+}
+
+export interface UserProfile {
+  id: number;
+  email: string;
+  name: string;
+  role: "admin" | "buyer" | "other";
+}
+
+export interface Order {
+  id: number;
+  user_id: number;
+  total_amount: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  items: OrderItem[];
+}
+
+export interface OrderItem {
+  id: number;
+  order_id: number;
   product_id: number;
   quantity: number;
   price: number;
@@ -55,48 +95,57 @@ export interface UserUpdateInput {
   password?: string;
 }
 
-//  client configuration
+// API client configuration
 const API_BASE_URL = "http://localhost:8080/api";
 
 export const client = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-// Add request interceptor for debugging
-client.interceptors.request.use(
-  (config) => {
-    console.log('Making request to:', config.url, config.method);
-    return config;
-  },
-  (error) => {
-    console.error('Request error:', error);
-    return Promise.reject(error);
+// Auth token handling
+export const setAuthToken = (token: string) => {
+  if (token) {
+    client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete client.defaults.headers.common["Authorization"];
   }
-);
+};
 
-// Update response interceptor with better error handling
-client.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error('Response error data:', error.response.data);
-      console.error('Response error status:', error.response.status);
-      console.error('Response error headers:', error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error('No response received:', error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error('Error setting up request:', error.message);
-    }
-    return Promise.reject(error);
-  }
-);
+// Auth API
+export const authApi = {
+  login: async (credentials: LoginRequest): Promise<LoginResponse> => {
+    const response = await client.post("/auth/login", credentials);
+    const { token } = response.data;
+    setAuthToken(token);
+    return response.data;
+  },
+
+  register: async (userData: RegisterRequest): Promise<LoginResponse> => {
+    const response = await client.post("/auth/register", userData);
+    const { token } = response.data;
+    setAuthToken(token);
+    return response.data;
+  },
+
+  logout: () => {
+    setAuthToken("");
+  },
+};
+
+// Profile API
+export const profileApi = {
+  getProfile: async (): Promise<UserProfile> => {
+    const response = await client.get("/profile");
+    return response.data;
+  },
+
+  updateProfile: async (profile: Partial<UserProfile>): Promise<void> => {
+    await client.put("/profile", profile);
+  },
+};
 
 // Products API
 export const productsApi = {
@@ -115,30 +164,54 @@ export const productsApi = {
     return response.data;
   },
 
-  delete: async (id: number): Promise<void> => {
-    await client.delete(`/products/${id}`);
+  update: async (id: number, product: ProductInput): Promise<void> => {
+    await client.put(`/products/${id}`, product);
   },
 
-  update: async (id: number, product: ProductInput): Promise<Product> => {
-    const response = await client.put(`/products/${id}`, product);
-    return response.data;
+  delete: async (id: number): Promise<void> => {
+    await client.delete(`/products/${id}`);
   },
 };
 
 // Cart API
 export const cartApi = {
   getContents: async (): Promise<CartItem[]> => {
-    const response = await client.get('/cart');
+    const response = await client.get("/cart");
     return response.data;
   },
 
   addItem: async (item: CartItemInput): Promise<CartItem> => {
-    const response = await client.post('/cart/add', item);
+    const response = await client.post("/cart/add", item);
     return response.data;
   },
 
   removeItem: async (id: number): Promise<void> => {
     await client.delete(`/cart/remove/${id}`);
+  },
+};
+
+// Orders API
+export const ordersApi = {
+  getAll: async (): Promise<Order[]> => {
+    const response = await client.get("/orders");
+    return response.data;
+  },
+
+  getById: async (id: number): Promise<Order> => {
+    const response = await client.get(`/orders/${id}`);
+    return response.data;
+  },
+
+  create: async (order: Order): Promise<void> => {
+    await client.post("/orders", order);
+  },
+
+  update: async (id: number, order: Order): Promise<void> => {
+    await client.put(`/orders/${id}`, order);
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await client.delete(`/orders/${id}`);
   },
 };
 
@@ -178,14 +251,20 @@ client.interceptors.response.use(
   (error) => {
     if (error.response) {
       switch (error.response.status) {
+        case 401:
+          // Handle unauthorized - clear token and redirect to login
+          authApi.logout();
+          // You might want to use a router here to redirect
+          window.location.href = "/login";
+          break;
         case 400:
-          throw new Error('Invalid input data');
+          throw new Error("Invalid input data");
         case 404:
-          throw new Error('Resource not found');
+          throw new Error("Resource not found");
         case 500:
-          throw new Error('Internal server error');
+          throw new Error("Internal server error");
         default:
-          throw new Error('An unexpected error occurred');
+          throw new Error("An unexpected error occurred");
       }
     }
     throw error;
