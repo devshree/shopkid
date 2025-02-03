@@ -5,65 +5,90 @@ import { useAuth } from "./AuthContext.tsx";
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (productId: number) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  addToCart: (cartItem: CartItem) => void;
+  removeFromCart: (cartItemId: number) => void;
+  updateQuantity: (cartItemId: number, quantity: number) => void;
   cartCount: number;
+  isLoading: boolean;
+  error: Error | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
     if (user) {
-      // Fetch cart items from API when user is logged in
       fetchCartItems();
     } else {
-      // Clear cart when user logs out
       setCartItems([]);
+      setError(null);
     }
   }, [user]);
 
   const fetchCartItems = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const data = await cartApi.getCart();
       setCartItems(data.items || []);
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
+    } catch (err) {
+      console.error("Error fetching cart items:", err);
+      setError(
+        err instanceof Error ? err : new Error("Failed to fetch cart items")
+      );
+      setCartItems([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const addToCart = async (productId: number) => {
+  const addToCart = async (cartItem: CartItem) => {
+    setError(null);
     try {
-      await cartApi.addToCart(productId);
+      await cartApi.addToCart(cartItem);
       await fetchCartItems();
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
+    } catch (err) {
+      console.error("Error adding item to cart:", err);
+      setError(
+        err instanceof Error ? err : new Error("Failed to add item to cart")
+      );
     }
   };
 
   const removeFromCart = async (productId: number) => {
+    setError(null);
     try {
       await cartApi.removeFromCart(productId);
       await fetchCartItems();
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
+    } catch (err) {
+      console.error("Error removing item from cart:", err);
+      setError(
+        err instanceof Error
+          ? err
+          : new Error("Failed to remove item from cart")
+      );
     }
   };
 
-  const updateQuantity = async (productId: number, quantity: number) => {
+  const updateQuantity = async (cartItemId: number, quantity: number) => {
+    setError(null);
     try {
       if (quantity <= 0) {
-        await cartApi.removeFromCart(productId);
+        await removeFromCart(cartItemId);
       } else {
-        await cartApi.addToCart(productId);
+        await cartApi.updateQuantity(cartItemId, quantity);
+        await fetchCartItems();
       }
-      await fetchCartItems();
-    } catch (error) {
-      console.error("Error updating quantity:", error);
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+      setError(
+        err instanceof Error ? err : new Error("Failed to update quantity")
+      );
     }
   };
 
@@ -77,6 +102,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         removeFromCart,
         updateQuantity,
         cartCount,
+        isLoading,
+        error,
       }}
     >
       {children}

@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Button,
+  CircularProgress,
   Container,
   IconButton,
   Toolbar,
@@ -35,7 +36,7 @@ const NavButton = styled(Button)<{
 function Navbar() {
   // This is a placeholder - replace with your actual auth state management
   const { user, setUser } = useAuth();
-  const { cartCount } = useCart();
+  const { cartCount, isLoading, error } = useCart();
 
   const handleLogout = () => {
     setUser(null);
@@ -88,9 +89,16 @@ function Navbar() {
             )}
 
             <IconButton color="primary" component={RouterLink} to="/cart">
-              <Badge badgeContent={cartCount} color="secondary">
-                <ShoppingCartIcon />
-              </Badge>
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                <Badge
+                  badgeContent={error ? "!" : cartCount}
+                  color={error ? "error" : "secondary"}
+                >
+                  <ShoppingCartIcon />
+                </Badge>
+              )}
             </IconButton>
           </Box>
         </Toolbar>

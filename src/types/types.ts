@@ -32,6 +32,7 @@ export interface CartItemInput {
   product_id: number;
   quantity: number;
   price: number;
+  product: Product;
 }
 
 export interface LoginRequest {

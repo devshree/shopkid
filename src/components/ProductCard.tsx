@@ -8,7 +8,9 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React from "react";
-import { Product } from "../types/types.ts";
+import { cartApi } from "../api/client.ts";
+import { useCart } from "../context/CartContext.tsx";
+import { Product, CartItem, CartItemInput } from "../types/types.ts";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
@@ -26,6 +28,23 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { cartCount, isLoading, error } = useCart();
+
+  const handleAddToCart = async () => {
+    const cartItem: CartItemInput = {
+      product_id: product.id,
+      quantity: 1,
+      price: product.price,
+      product: product,
+    };
+    try {
+      await cartApi.addToCart(cartItem);
+    } catch (error) {
+      console.error("Failed to add item to cart:", error);
+      // You might want to add a toast/snackbar notification here
+    }
+  };
+
   return (
     <StyledCard>
       <CardMedia
@@ -46,7 +65,12 @@ export function ProductCard({ product }: ProductCardProps) {
           ${product.price}
         </Typography>
         <Box sx={{ mt: 2 }}>
-          <Button variant="contained" color="primary" fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleAddToCart}
+          >
             Add to Cart
           </Button>
         </Box>

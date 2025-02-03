@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   CartItem,
+  CartItemInput,
   LoginRequest,
   LoginResponse,
   Order,
@@ -103,32 +104,39 @@ export const cartApi = {
     return response.json();
   },
 
-  addToCart: async (productId: number): Promise<void> => {
-    const response = await fetch("/api/cart/add", {
+  addToCart: async (cartItem: CartItemInput): Promise<void> => {
+    const response = await fetch("/api/cart", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ productId }),
+      body: JSON.stringify(cartItem),
     });
     if (!response.ok) {
       throw new Error("Failed to add item to cart");
     }
   },
 
-  removeFromCart: async (productId: number): Promise<void> => {
-    const response = await fetch("/api/cart/remove", {
-      method: "POST",
+  removeFromCart: async (cartItemId: number): Promise<void> => {
+    const response = await fetch("/api/cart", {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ productId }),
+      body: JSON.stringify({ cartItemId }),
     });
     if (!response.ok) {
       throw new Error("Failed to remove item from cart");
     }
+  },
+
+  updateQuantity: async (
+    cartItemId: number,
+    quantity: number
+  ): Promise<void> => {
+    await client.put(`/cart`, { cartItemId, quantity });
   },
 };
 

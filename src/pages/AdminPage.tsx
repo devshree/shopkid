@@ -12,10 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Product, ProductInput } from "../api/client";
 import { productsApi } from "../api/client.ts";
 import { EditProductPage } from "../components/EditProductPage.tsx";
 import { ProductTable } from "../components/ProductTable.tsx";
+import { Product, ProductInput } from "../types/types.ts";
 
 function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
