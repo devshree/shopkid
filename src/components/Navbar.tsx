@@ -31,6 +31,14 @@ const NavButton = styled(Button)<{
 }));
 
 function Navbar() {
+  // This is a placeholder - replace with your actual auth state management
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    setIsAuthenticated(false);
+  };
+
   return (
     <StyledAppBar position="sticky">
       <Container maxWidth="lg">
@@ -59,9 +67,23 @@ function Navbar() {
             <NavButton component={RouterLink} to="/sale">
               Sale
             </NavButton>
-            <IconButton color="primary" component={RouterLink} to="/profile">
-              <PersonIcon />
-            </IconButton>
+
+            {isAuthenticated ? (
+              <>
+                <IconButton
+                  color="primary"
+                  component={RouterLink}
+                  to="/profile"
+                >
+                  <PersonIcon />
+                </IconButton>
+                <NavButton onClick={handleLogout}>Logout</NavButton>
+              </>
+            ) : (
+              <NavButton component={RouterLink} to="/login">
+                Login
+              </NavButton>
+            )}
 
             <IconButton color="primary">
               <Badge badgeContent={4} color="secondary">
