@@ -10,7 +10,7 @@ import { styled } from "@mui/material/styles";
 import React from "react";
 import { cartApi } from "../api/client.ts";
 import { useCart } from "../context/CartContext.tsx";
-import { Product, CartItem, CartItemInput } from "../types/types.ts";
+import { CartItemInput, Product } from "../types/types.ts";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: "100%",
@@ -29,8 +29,11 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { cartCount, isLoading, error } = useCart();
+  const [isAddingToCart, setIsAddingToCart] = React.useState(false);
 
   const handleAddToCart = async () => {
+    console.log("Adding to cart:", product.id);
+    setIsAddingToCart(true);
     const cartItem: CartItemInput = {
       product_id: product.id,
       quantity: 1,
@@ -41,7 +44,8 @@ export function ProductCard({ product }: ProductCardProps) {
       await cartApi.addToCart(cartItem);
     } catch (error) {
       console.error("Failed to add item to cart:", error);
-      // You might want to add a toast/snackbar notification here
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -70,8 +74,9 @@ export function ProductCard({ product }: ProductCardProps) {
             color="primary"
             fullWidth
             onClick={handleAddToCart}
+            disabled={isAddingToCart || isLoading}
           >
-            Add to Cart
+            {isAddingToCart ? "Adding..." : "Add to Cart"}
           </Button>
         </Box>
       </CardContent>
