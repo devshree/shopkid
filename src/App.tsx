@@ -17,6 +17,7 @@ import LoginPage from "./pages/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import SalePage from "./pages/SalePage.tsx";
 import ToysPage from "./pages/ToysPage.tsx";
+import { CartProvider } from "./context/CartContext";
 
 // Create a warm, child-friendly theme
 const theme = createTheme({
@@ -77,75 +78,77 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-            }}
-          >
-            <Navbar />
-            <main>
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      <HomePage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <AdminPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/clothing"
-                  element={
-                    <ProtectedRoute>
-                      <ClothingPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/toys"
-                  element={
-                    <ProtectedRoute>
-                      <ToysPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/sale"
-                  element={
-                    <ProtectedRoute>
-                      <SalePage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile/:id"
-                  element={
-                    <ProtectedRoute>
-                      <UserProfilePage />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
-      </ThemeProvider>
+      <CartProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "100vh",
+              }}
+            >
+              <Navbar />
+              <main>
+                <Routes>
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route
+                    path="/"
+                    element={
+                      <ProtectedRoute>
+                        <HomePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute>
+                        <AdminPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/clothing"
+                    element={
+                      <ProtectedRoute>
+                        <ClothingPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/toys"
+                    element={
+                      <ProtectedRoute>
+                        <ToysPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/sale"
+                    element={
+                      <ProtectedRoute>
+                        <SalePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <UserProfilePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </Router>
+        </ThemeProvider>
+      </CartProvider>
     </AuthProvider>
   );
 }

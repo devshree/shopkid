@@ -9,10 +9,12 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/client.ts";
+import { authApi, userApi } from "../api/client.ts";
+import { useAuth } from "../context/AuthContext.tsx";
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
@@ -26,6 +28,9 @@ export function RegisterPage() {
     try {
       const response = await authApi.register(formData);
       localStorage.setItem("token", response.token);
+
+      const currentUser = await userApi.getCurrentUser();
+      setUser(currentUser);
       navigate("/");
     } catch (err) {
       setError("Registration failed. Please try again.");

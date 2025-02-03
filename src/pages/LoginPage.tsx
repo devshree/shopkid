@@ -9,10 +9,12 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/client.ts";
+import { authApi, userApi } from "../api/client.ts";
+import { useAuth } from "../context/AuthContext.tsx";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
@@ -23,8 +25,11 @@ export function LoginPage() {
     e.preventDefault();
     try {
       const response = await authApi.login(formData);
-      // Store token in localStorage
       localStorage.setItem("token", response.token);
+
+      const currentUser = await userApi.getCurrentUser();
+      setUser(currentUser);
+
       navigate("/");
     } catch (err) {
       setError("Invalid email or password");

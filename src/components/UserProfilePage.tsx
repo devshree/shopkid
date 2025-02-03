@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { User } from "../api/client";
+import { useAuth } from "../context/AuthContext.tsx";
 
 interface UserProfile {
   id: number;
@@ -22,18 +22,21 @@ interface UserProfile {
   role: "admin" | "buyer" | "other";
 }
 
-export function UserProfilePage({ user }: { user: User }) {
+export function UserProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
+  const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile>({
-    id: user.id,
-    email: user.email,
-    name: user.username,
+    id: user?.id ?? 0,
+    email: user?.email ?? "",
+    name: user?.username ?? "",
     role: "buyer",
   });
-
   const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
+
+  if (!user) {
+    return <div>User not found</div>;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,7 +82,7 @@ export function UserProfilePage({ user }: { user: User }) {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="First Name"
+                    label="Name"
                     name="name"
                     value={editedProfile.name}
                     onChange={handleInputChange}
@@ -93,6 +96,15 @@ export function UserProfilePage({ user }: { user: User }) {
                     type="email"
                     value={editedProfile.email}
                     onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Role"
+                    name="role"
+                    value={editedProfile.role}
+                    disabled={true}
                   />
                 </Grid>
                 <Grid item xs={12}>
