@@ -95,48 +95,38 @@ export const productsApi = {
 // Cart API
 export const cartApi = {
   getCart: async (): Promise<{ items: CartItem[] }> => {
-    const response = await fetch("/api/cart", {
-      credentials: "include",
-    });
-    if (!response.ok) {
+    const response = await client.get("/cart");
+    if (response.status !== 200) {
       throw new Error("Failed to fetch cart");
     }
-    return response.json();
+    return response.data;
   },
 
   addToCart: async (cartItem: CartItemInput): Promise<void> => {
-    const response = await fetch("/api/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(cartItem),
-    });
-    if (!response.ok) {
+    const response = await client.post("/cart", cartItem);
+    if (response.status !== 200) {
       throw new Error("Failed to add item to cart");
     }
+    return response.data;
   },
 
   removeFromCart: async (cartItemId: number): Promise<void> => {
-    const response = await fetch("/api/cart", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ cartItemId }),
-    });
-    if (!response.ok) {
+    const response = await client.delete(`/cart/${cartItemId}`);
+    if (response.status !== 200) {
       throw new Error("Failed to remove item from cart");
     }
+    return response.data;
   },
 
   updateQuantity: async (
     cartItemId: number,
     quantity: number
   ): Promise<void> => {
-    await client.put(`/cart`, { cartItemId, quantity });
+    await client.put(`/cart/${cartItemId}`, { quantity });
+  },
+
+  clearCart: async (): Promise<void> => {
+    await client.delete("/cart");
   },
 };
 
