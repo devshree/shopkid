@@ -6,10 +6,12 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
+import CartPage from "./components/CartPage.tsx";
 import Footer from "./components/Footer.tsx";
 import Navbar from "./components/Navbar.tsx";
 import UserProfilePage from "./components/UserProfilePage.tsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.tsx";
+import { CartProvider } from "./context/CartContext";
 import AdminPage from "./pages/AdminPage.tsx";
 import ClothingPage from "./pages/ClothingPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
@@ -17,7 +19,6 @@ import LoginPage from "./pages/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import SalePage from "./pages/SalePage.tsx";
 import ToysPage from "./pages/ToysPage.tsx";
-import { CartProvider } from "./context/CartContext";
 
 // Create a warm, child-friendly theme
 const theme = createTheme({
@@ -139,6 +140,14 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <UserProfilePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/cart"
+                    element={
+                      <ProtectedRoute>
+                        <CartPage />
                       </ProtectedRoute>
                     }
                   />

@@ -13,6 +13,8 @@ import {
 import { styled } from "@mui/material/styles";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.tsx";
+import { useCart } from "../context/CartContext.tsx";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -32,11 +34,11 @@ const NavButton = styled(Button)<{
 
 function Navbar() {
   // This is a placeholder - replace with your actual auth state management
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const { user, setUser } = useAuth();
+  const { cartCount } = useCart();
 
   const handleLogout = () => {
-    // Add your logout logic here
-    setIsAuthenticated(false);
+    setUser(null);
   };
 
   return (
@@ -68,7 +70,7 @@ function Navbar() {
               Sale
             </NavButton>
 
-            {isAuthenticated ? (
+            {user ? (
               <>
                 <IconButton
                   color="primary"
@@ -85,8 +87,8 @@ function Navbar() {
               </NavButton>
             )}
 
-            <IconButton color="primary">
-              <Badge badgeContent={4} color="secondary">
+            <IconButton color="primary" component={RouterLink} to="/cart">
+              <Badge badgeContent={cartCount} color="secondary">
                 <ShoppingCartIcon />
               </Badge>
             </IconButton>
