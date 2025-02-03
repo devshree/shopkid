@@ -16,17 +16,22 @@ import React, { useState } from "react";
 import { User } from "../api/client";
 
 interface UserProfile {
-  firstName: string;
-  lastName: string;
+  id: number;
   email: string;
-  password: string;
+  name: string;
+  role: "admin" | "buyer" | "other";
 }
 
 export function UserProfilePage({ user }: { user: User }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const [profile, setProfile] = useState<UserProfile>(user);
+  const [profile, setProfile] = useState<UserProfile>({
+    id: user.id,
+    email: user.email,
+    name: user.username,
+    role: "buyer",
+  });
 
   const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
 
@@ -57,9 +62,7 @@ export function UserProfilePage({ user }: { user: User }) {
               sx={{ width: 100, height: 100, mr: 2 }}
             />
             <Box>
-              <Typography variant="h4">
-                {profile.firstName} {profile.lastName}
-              </Typography>
+              <Typography variant="h4">{profile.name}</Typography>
               <Button
                 startIcon={<EditIcon />}
                 onClick={() => setIsEditing(!isEditing)}
@@ -77,17 +80,8 @@ export function UserProfilePage({ user }: { user: User }) {
                   <TextField
                     fullWidth
                     label="First Name"
-                    name="firstName"
-                    value={editedProfile.firstName}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    value={editedProfile.lastName}
+                    name="name"
+                    value={editedProfile.name}
                     onChange={handleInputChange}
                   />
                 </Grid>
@@ -98,35 +92,6 @@ export function UserProfilePage({ user }: { user: User }) {
                     name="email"
                     type="email"
                     value={editedProfile.email}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Phone"
-                    name="phone"
-                    value={editedProfile.phone}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Address"
-                    name="address"
-                    value={editedProfile.address}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Bio"
-                    name="bio"
-                    multiline
-                    rows={4}
-                    value={editedProfile.bio}
                     onChange={handleInputChange}
                   />
                 </Grid>
@@ -158,12 +123,6 @@ export function UserProfilePage({ user }: { user: User }) {
                   Email
                 </Typography>
                 <Typography variant="body1">{profile.email}</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Password
-                </Typography>
-                <Typography variant="body1">{profile.password}</Typography>
               </Grid>
             </Grid>
           )}

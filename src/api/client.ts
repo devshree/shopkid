@@ -9,6 +9,7 @@ export interface Product {
   category: "clothes" | "toys";
   age_range: string;
   stock: number;
+  image?: string;
 }
 
 export interface ProductInput {
